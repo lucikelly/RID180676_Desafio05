@@ -1,10 +1,11 @@
 import express from "express"
+import BookRouters from "./src/routes/book.routes.js"
 import "dotenv/config"
 const app = express()
 
-app.get('/hello', function (req, res) {
-  res.send('Desafio_05 DNC')
-})
+app.use(express.json());
+app.use(BookRouters);
+
 
 
 const port = process.env.PORT || 3000;

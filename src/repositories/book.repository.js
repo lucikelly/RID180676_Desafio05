@@ -13,7 +13,7 @@ db.run(`CREATE TABLE IF NOT EXISTS books (
 
 
 function createBookRepository(newBook) {
-  return new Promise((res, rej) => {
+  return new Promise((resolve, reject) => {
     const {autor, titulo, numero_de_paginas, codigo_ISBN, editora} = newBook 
     db.run(
       `
@@ -28,15 +28,62 @@ function createBookRepository(newBook) {
         editora
       ], (err) => {
         if (err) {
-          rej(err)
+          reject(err)
         } else {
-          res({message: 'Book Created'})
+          resolve({id: this.lastID, ...newBook})
         }
       }
     );
   })
 }
 
-export default {
-  createBookRepository
+function findAllBooksRepository() {
+  return new Promise((resolve, reject) => {
+    db.all(`SELECT * FROM books`, [], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
 }
+
+function findByIdBookRepository(bookId) {
+  return new Promise((resolve, reject) => {
+    db.get(`SELECT * FROM books WHERE id = ?`, [bookId], (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row)
+      }
+    });
+  });
+ }
+
+function updateBookRepository() {
+
+}
+
+function deleteBookRepository(bookId) {
+  return new Promise((resolve, reject) => {
+    db.run(`DELETE * FROM books WHERE id = ?`, [bookId], function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ message: "Book deleted successfully", bookId });
+      }
+    });
+  });
+}
+
+
+
+
+export default {
+  createBookRepository,
+  findAllBooksRepository,
+  findByIdBookRepository,
+  updateBookRepository,
+  deleteBookRepository
+};
